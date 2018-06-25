@@ -22,6 +22,7 @@ router.get("/:id/:a", function(req, res, next) {
     });
   })
 
+  // ?id = 6
   router.get("/", function(req, res, next) {
       console.log(req.query)
     sql = "SELECT name FROM `opark` WHERE id=" + req.query.id;
