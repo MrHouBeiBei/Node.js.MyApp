@@ -6,9 +6,11 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
-var users = require('./routes/users');
-var test = require('./routes/test');
-var crawler = require('./routes/crawler');
+// var users = require('./routes/users');
+// var test = require('./routes/test');
+// var crawler = require('./routes/crawler');
+
+var routes = require('./routes/constant/api.constant');
 
 var cors = require('cors');
 
@@ -39,9 +41,12 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
-app.use('/users', users);
-app.use('/test', test);
-app.use('/crawler', crawler);
+// app.use('/users', users);
+// app.use('/test', test);
+// app.use('/crawler', crawler);
+routes.forEach( route => {
+  app.use(route.path, route.filePath);
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
