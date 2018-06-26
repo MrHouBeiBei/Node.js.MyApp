@@ -4,6 +4,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var proxy = require('http-proxy-middleware'); //代理转发
 
 var index = require('./routes/index');
 // var users = require('./routes/users');
@@ -40,13 +41,17 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', index);
+// app.use('/', index);
 // app.use('/users', users);
 // app.use('/test', test);
 // app.use('/crawler', crawler);
 routes.forEach( route => {
   app.use(route.path, route.filePath);
 })
+
+// api/H5ProbationProductFlow/QueryProductList
+// api/Activity/list
+app.use('/', proxy({target: 'http://api-test.fcleyuan.com', changeOrigin: true}));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

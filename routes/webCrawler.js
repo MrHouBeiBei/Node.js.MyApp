@@ -4,6 +4,7 @@ var db = require("../config/db");
 
 var http = require('http')
 var cheerio = require('cheerio')  //爬虫
+var proxy = require('http-proxy-middleware'); //代理转发
 
 /* GET users listing. */
 
@@ -74,5 +75,36 @@ router.get("/", function(req, res, next) {
     })
 
   })
+
+
+router.get("/car", function(req, res, next) {
+    // var options = {
+    //     target: 'http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList',
+    //     changeOrigin: true,   
+    // }
+    // var apiProxy = proxy('/api/H5ProbationProductFlow/QueryProductList', {target: 'http://api-test.fcleyuan.com'});
+    // proxy(options)
+    // res.send(proxy(options))
+    res.send('66')
+})
+
+// var options = {
+//     target: 'http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList',
+//     changeOrigin: true,   
+// }
+router.get("/agent",  function(req, res, next){
+    http.get('http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList', (rt) => {
+        var result;
+        rt.on('data', (data) => {
+            result = data
+        })
+        rt.on('end', () => {
+            // console.log(result)
+            res.json(result)
+        })
+        
+    })
+    
+})
  
 module.exports = router;
