@@ -25,21 +25,19 @@ router.get("/", function(req, res, next) {
         // }]
         var courseData = []
         chapters.each(function(item){
-    
             var chapter = $(this)
-            var chapterTitle = chapter.find('strong').text()
+            var chapterTitle = chapter.find('h3').text().replace(/\n/gm, '').replace(/ /g,'')
             var videos  = chapter.find('.video').children('li')
-    
             var chapterData = {
                 chapterTitle: chapterTitle,
                 videos:[]
             }
-    
+
             videos.each(function(item){
-                var video = $(this).find('.J-media-item')
-                var videoTitle = video.text()
-                var id  = video.attr('href').split('video/')[1]
-    
+                var video = $(this)
+                var videoTitle = video.find('.J-media-item').text().replace(/\n/gm, '').replace(/ /g,'')
+                var id  = video.attr('data-media-id').replace(/\n/gm, '').replace(/ /g,'')
+                // var id  = video.attr('href').split('video/')[1]
                 chapterData.videos.push({
                     title:videoTitle,
                     id:id
@@ -51,10 +49,12 @@ router.get("/", function(req, res, next) {
     }
     
     function printCourseInfo(courseData){
+        res.send(JSON.stringify(courseData))
         courseData.forEach(function(item){
             var chapterTitle = item.chapterTitle
             // console.log(chapterTitle + '\n')
-            console.log(chapterTitle.trim() + '\n')
+            // console.log(chapterTitle.trim() + '\n')
+            console.log(chapterTitle)
         })
     }
     
