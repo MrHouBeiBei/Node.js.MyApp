@@ -19,6 +19,7 @@
     "serve-favicon": "~2.4.5"
   },
   "devDependencies": {
+    "http-proxy-middleware": "^0.18.0",
     "nodemon": "^1.17.5"
   }
 }

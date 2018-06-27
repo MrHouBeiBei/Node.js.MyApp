@@ -1,4 +1,4 @@
-
+var proxy = require('http-proxy-middleware'); //代理转发
 
 const routes = [
     {
@@ -15,9 +15,15 @@ const routes = [
     },
     {
         name: '爬虫',
-        path: '/crawler',
-        filePath: require('../crawler') 
+        path: '/webCrawler',
+        filePath: require('../webCrawler') 
     },
+
+    // {
+    //     name: '代理',
+    //     path: '/agent',
+    //     filePath: proxy({target: 'http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList', changeOrigin: true}) 
+    // },
 ]
 
 module.exports = routes
