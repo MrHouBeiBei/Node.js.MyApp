@@ -49,7 +49,12 @@ router.get("/", function(req, res, next) {
     }
     
     function printCourseInfo(courseData){
-        res.send(JSON.stringify(courseData))
+        var resultData = {}
+        resultData.code = 200
+        resultData.data = courseData
+        res.status(200)
+        res.send(JSON.stringify(resultData))
+
         courseData.forEach(function(item){
             var chapterTitle = item.chapterTitle
             // console.log(chapterTitle + '\n')
