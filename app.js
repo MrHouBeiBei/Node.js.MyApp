@@ -52,7 +52,7 @@ routes.forEach( route => {
 // api/H5ProbationProductFlow/QueryProductList
 // api/Activity/list
 app.use('/', proxy('/', {target: 'http://api-test.fcleyuan.com', changeOrigin: true}));
-// app.use('/api/Activity/list', proxy({target: 'http://api-test.fcleyuan.com', changeOrigin: true}));
+// app.use('/api', proxy({target: 'http://api-test.fcleyuan.com', changeOrigin: true}));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

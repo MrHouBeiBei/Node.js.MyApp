@@ -83,24 +83,51 @@ router.get("/", function(req, res, next) {
 
 
 router.get("/car", function(req, res, next) {
-    // var options = {
-    //     target: 'http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList',
-    //     changeOrigin: true,   
-    // }
-    // var apiProxy = proxy('/api/H5ProbationProductFlow/QueryProductList', {target: 'http://api-test.fcleyuan.com'});
-    // proxy(options)
-    // res.send(proxy(options))
-    res.send('66')
+    
+    let httpRequest = http.get('http://car.bitauto.com/aodia8l/', (res) => {
+        var result = ''
+        res.on('data', (data) => {
+            result += data
+        })
+        res.on('end', () => {
+            handleData(result)
+        })
+    })
+    httpRequest.end()
+
+    var handleData = function(html) {
+        var $ = cheerio.load(html)
+        var A8List = $('.list-table').first().children().first().children().eq(1).children()
+        // var A8List = $('.list-table')[0].childNodes[0].childNodes[1].childNodes
+
+        var dataList = []
+        A8List.each( function(index, el) {
+            var item = $(this)
+            // console.log(item.find('.txt-left').children().length)
+
+            var carInfo = {}
+            if(item.find('.txt').text()) {
+                carInfo.name = item.find('.txt').text()
+                carInfo.id = item.find('.txt').attr('data-channelid')
+                dataList.push(carInfo)
+            }
+           
+        })
+        res.send(dataList)
+    }
 })
 
 // var options = {
 //     target: 'http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList',
 //     changeOrigin: true,   
 // }
+// proxy(options)
+
+// 代理 FC试用列表
 router.get("/agent",  function(req, res, next){
 
     let request = http.get('http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList', (rt) => {
-        let result = '';
+        var result = '';
         rt.on('data', (data) => {
             result += data
         })
