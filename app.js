@@ -9,7 +9,6 @@ var proxy = require('http-proxy-middleware'); //代理转发
 var index = require('./routes/index');
 // var users = require('./routes/users');
 // var test = require('./routes/test');
-// var crawler = require('./routes/crawler');
 
 var routes = require('./routes/constant/api.constant');
 
@@ -41,17 +40,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/index', index);
 // app.use('/', index);
 // app.use('/users', users);
 // app.use('/test', test);
-// app.use('/crawler', crawler);
 routes.forEach( route => {
   app.use(route.path, route.filePath);
 })
 
+// 代理
 // api/H5ProbationProductFlow/QueryProductList
 // api/Activity/list
-app.use('/', proxy({target: 'http://api-test.fcleyuan.com', changeOrigin: true}));
+app.use('/', proxy('/', {target: 'http://api-test.fcleyuan.com', changeOrigin: true}));
+// app.use('/api/Activity/list', proxy({target: 'http://api-test.fcleyuan.com', changeOrigin: true}));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

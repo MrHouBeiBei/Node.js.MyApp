@@ -98,17 +98,28 @@ router.get("/car", function(req, res, next) {
 //     changeOrigin: true,   
 // }
 router.get("/agent",  function(req, res, next){
-    http.get('http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList', (rt) => {
-        var result;
+
+    let request = http.get('http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList', (rt) => {
+        let result = '';
         rt.on('data', (data) => {
-            result = data
+            result += data
         })
         rt.on('end', () => {
-            // console.log(result)
-            res.json(result)
+            handleData(result)
+            // res.send(result)
         })
-        
     })
+    request.end()
+
+    var handleData = function(data) {
+        var copeData = JSON.parse(data)
+        copeData.type = 'node代理'
+        let item  = {
+            name: 'node代理数据修改测试'
+        }
+        copeData.data.result.push(item)
+        res.send(copeData)
+    }
     
 })
  
