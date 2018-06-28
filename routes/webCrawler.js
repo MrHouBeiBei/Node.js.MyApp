@@ -100,7 +100,9 @@ router.get("/car", function(req, res, next) {
         var A8List = $('.list-table').first().children().first().children().eq(1).children()
         // var A8List = $('.list-table')[0].childNodes[0].childNodes[1].childNodes
 
-        var dataList = []
+        var title = $('.section-header').eq(3).children('div').children('h2').text()
+
+        var data = {}, dataList = []
         A8List.each( function(index, el) {
             var item = $(this)
             // console.log(item.find('.txt-left').children().length)
@@ -108,12 +110,15 @@ router.get("/car", function(req, res, next) {
             var carInfo = {}
             if(item.find('.txt').text()) {
                 carInfo.name = item.find('.txt').text()
+                carInfo.price = item.children('td').eq(3).children().eq(0).text()
                 carInfo.id = item.find('.txt').attr('data-channelid')
                 dataList.push(carInfo)
             }
-           
         })
-        res.send(dataList)
+        data.code = 200
+        data.title = title
+        data.list = dataList
+        res.send(data)
     }
 })
 
