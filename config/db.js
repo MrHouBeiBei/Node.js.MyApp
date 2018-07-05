@@ -3,7 +3,8 @@ var pool = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "123321",
-  database: "octpark"
+//   database: "octpark",
+  database: "test",
 });
 
 function query(sql,callback){

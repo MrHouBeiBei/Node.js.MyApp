@@ -3,20 +3,20 @@ var router = express.Router();
 var db = require("../config/db");
 
 var http = require('http')
-var cheerio = require('cheerio')  //爬虫
+var cheerio = require('cheerio') //爬虫
 var proxy = require('http-proxy-middleware'); //代理转发
 
 /* GET users listing. */
 
 
-router.get("/", function(req, res, next) {
+router.get("/", function (req, res, next) {
 
     var url = 'http://www.imooc.com/learn/348'
     // var url = 'http://wx.baozhenche.com/static/html/apiHtmlDoc.html?v=1517370#tCarCampaignAddress'
 
-    function filterChapters(html){
+    function filterChapters(html) {
         var $ = cheerio.load(html)
-        var chapters = $('.chapter')   // chapter html类名
+        var chapters = $('.chapter') // chapter html类名
         // [{
         //     chapterTitle: '',
         //     videos:[
@@ -25,65 +25,65 @@ router.get("/", function(req, res, next) {
         //     ]
         // }]
         var courseData = []
-        chapters.each(function(item){
+        chapters.each(function (item) {
             var chapter = $(this)
-            var chapterTitle = chapter.find('h3').text().replace(/\n/gm, '').replace(/ /g,'')
-            var videos  = chapter.find('.video').children('li')
+            var chapterTitle = chapter.find('h3').text().replace(/\n/gm, '').replace(/ /g, '')
+            var videos = chapter.find('.video').children('li')
             var chapterData = {
                 chapterTitle: chapterTitle,
-                videos:[]
+                videos: []
             }
 
-            videos.each(function(item){
+            videos.each(function (item) {
                 var video = $(this)
-                var videoTitle = video.find('.J-media-item').text().replace(/\n/gm, '').replace(/ /g,'')
-                var id  = video.attr('data-media-id').replace(/\n/gm, '').replace(/ /g,'')
+                var videoTitle = video.find('.J-media-item').text().replace(/\n/gm, '').replace(/ /g, '')
+                var id = video.attr('data-media-id').replace(/\n/gm, '').replace(/ /g, '')
                 // var id  = video.attr('href').split('video/')[1]
                 chapterData.videos.push({
-                    title:videoTitle,
-                    id:id
+                    title: videoTitle,
+                    id: id
                 })
             })
             courseData.push(chapterData)
         })
         return courseData
     }
-    
-    function printCourseInfo(courseData){
+
+    function printCourseInfo(courseData) {
         var resultData = {}
         resultData.code = 200
         resultData.data = courseData
         res.status(200)
         res.send(JSON.stringify(resultData))
 
-        courseData.forEach(function(item){
+        courseData.forEach(function (item) {
             var chapterTitle = item.chapterTitle
             // console.log(chapterTitle + '\n')
             // console.log(chapterTitle.trim() + '\n')
             console.log(chapterTitle)
         })
     }
-    
-    http.get(url,function(res){
+
+    http.get(url, function (res) {
         var html = '';
-        res.on('data',function(data){
+        res.on('data', function (data) {
             html += data
         })
 
-        res.on('end',function(){
+        res.on('end', function () {
             // console.log(html)
             var courseData = filterChapters(html)
             printCourseInfo(courseData)
         })
-    }).on('error',function(){
+    }).on('error', function () {
         console.log('获取课程数据出错')
     })
 
-  })
+})
 
 
-router.get("/car", function(req, res, next) {
-    
+router.get("/car", function (req, res, next) {
+
     let httpRequest = http.get('http://car.bitauto.com/aodia8l/', (res) => {
         var result = ''
         res.on('data', (data) => {
@@ -95,26 +95,41 @@ router.get("/car", function(req, res, next) {
     })
     httpRequest.end()
 
-    var handleData = function(html) {
+    var handleData = function (html) {
         var $ = cheerio.load(html)
         var A8List = $('.list-table').first().children().first().children().eq(1).children()
         // var A8List = $('.list-table')[0].childNodes[0].childNodes[1].childNodes
 
         var title = $('.section-header').eq(3).children('div').children('h2').text()
 
-        var data = {}, dataList = []
-        A8List.each( function(index, el) {
+        var data = {},
+            dataList = []
+        A8List.each(function (index, el) {
             var item = $(this)
             // console.log(item.find('.txt-left').children().length)
 
             var carInfo = {}
-            if(item.find('.txt').text()) {
+            if (item.find('.txt').text()) {
                 carInfo.name = item.find('.txt').text()
                 carInfo.price = item.children('td').eq(3).children().eq(0).text()
                 carInfo.id = item.find('.txt').attr('data-channelid')
                 dataList.push(carInfo)
             }
         })
+
+        try {
+            // var carItem = dataList[0];
+            dataList.forEach(carItem => {
+                var sql = `INSERT INTO car (name, code,price) VALUES('${carItem.name}','${carItem.id}','${carItem.price}')`;
+                db.query(sql, function (err, rows) {
+                    console.log(err)
+                    console.log(rows)
+                })
+            })
+        } catch (error) {
+            console.log(error)
+        }
+
         data.code = 200
         data.title = title
         data.list = dataList
@@ -129,7 +144,7 @@ router.get("/car", function(req, res, next) {
 // proxy(options)
 
 // 代理 FC试用列表
-router.get("/agent",  function(req, res, next){
+router.get("/agent", function (req, res, next) {
 
     let request = http.get('http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList', (rt) => {
         var result = '';
@@ -143,16 +158,16 @@ router.get("/agent",  function(req, res, next){
     })
     request.end()
 
-    var handleData = function(data) {
+    var handleData = function (data) {
         var copeData = JSON.parse(data)
         copeData.type = 'node代理'
-        let item  = {
+        let item = {
             name: 'node代理数据修改测试'
         }
         copeData.data.result.push(item)
         res.send(copeData)
     }
-    
+
 })
- 
+
 module.exports = router;
