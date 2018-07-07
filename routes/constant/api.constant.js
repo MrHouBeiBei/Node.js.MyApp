@@ -40,6 +40,11 @@ const routes = [
         path: '/os',
         filePath: require('../os') 
     },
+    {
+        name: '路径api',
+        path: '/path',
+        filePath: require('../path') 
+    },
 ]
 
 module.exports = routes
