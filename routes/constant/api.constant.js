@@ -34,6 +34,12 @@ const routes = [
     //     path: '/agent',
     //     filePath: proxy({target: 'http://api-test.fcleyuan.com/api/H5ProbationProductFlow/QueryProductList', changeOrigin: true}) 
     // },
+
+    {
+        name: '操作系统api',
+        path: '/os',
+        filePath: require('../os') 
+    },
 ]
 
 module.exports = routes
